@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // JUnit JAR 파일 다운로드
-                    sh "curl -O ${JUNIT_URL}"
+                    sh "curl -O /classes;lib ${JUNIT_URL}"
                 }
             }
         }
@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     // JUnit 5 테스트 실행을 위한 classpath 설정
-                    def classpath = "${JUNIT_JAR}"
+                    def classpath = "classes;lib/junit-platform-console-standalone1.7.1.jar"
                     // JUnit 5 테스트 실행
                     bat 'java -cp classes:${classpath} org.junit.platform.console.ConsoleLauncher --scan-classpath > test_results.txt'
                     }
