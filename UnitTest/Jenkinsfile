@@ -29,7 +29,7 @@ pipeline {
                     def junitJarPath = "libs/*"
                     def classpath = "classes/*"
                     // JUnit 5 테스트 실행
-                    sh "java -jar ${junitJarPath} --scan-classpath ${classpath} > test_results.txt"
+                    sh "java -cp ${junitJarPath}  org.junit.platform.console.ConsoleLauncher --scan-classpath > test_results.txt"
                 }
             }
         }
