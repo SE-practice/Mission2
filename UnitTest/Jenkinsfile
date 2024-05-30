@@ -1,10 +1,9 @@
 pipeline {
     agent any
 
-  tools {
+    tools {
         jdk 'JDK_1.8'  // Jenkins 관리 페이지에서 설정한 JDK 이름과 일치해야 합니다.
     }
-
 
     stages {
         stage('Checkout') {
@@ -15,29 +14,31 @@ pipeline {
         }
 
         stage('Build') {
-                steps {
-                // Java 파일들을 컴파일하여 생성된 클래스 파일을 classes 디렉토리에 저장
-                // window 일 경우 bat
-                sh 'javac -encoding UTF-8 -classpath "libs/*" -d classes UnitTest/src/*.java'
-           }
+            steps {
+                // 클래스 파일을 저장할 디렉토리 생성
+                sh 'mkdir -p classes'
+                // Java 파일 컴파일
+                sh 'javac -encoding UTF-8 -d classes UnitTest/src/*.java'
+            }
         }
 
         stage('Test') {
             steps {
                 script {
                     // JUnit 5 테스트 실행을 위한 classpath 설정
-                    def classpath = "classes:libs/*"
+                    def junitJarPath = "libs/${env.JUNIT_JAR}"
+                    def classpath = "classes:${junitJarPath}"
                     // JUnit 5 테스트 실행
-                    sh 'java -cp ${classpath} org.junit.platform.console.ConsoleLauncher --scan-classpath > test_results.txt'
-                    }
+                    sh "java -jar ${junitJarPath} --classpath ${classpath} --scan-classpath > test_results.txt"
                 }
-         }
+            }
+        }
     }
 
     post {
         always {
-            // 테스트 결과 파일을 저장하기 위해 아카이브
-            archiveArtifacts 'test_results.txt'
+            // 테스트 결과 파일 아카이브
+            archiveArtifacts artifacts: 'test_results.txt', allowEmptyArchive: true
         }
         failure {
             echo 'Build or test failed'
@@ -47,6 +48,3 @@ pipeline {
         }
     }
 }
-
-
-
