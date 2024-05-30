@@ -26,8 +26,8 @@ pipeline {
             steps {
                 script {
                     // JUnit 5 테스트 실행을 위한 classpath 설정
-                    def junitJarPath = "libs/${env.JUNIT_JAR}"
-                    def classpath = "classes:${junitJarPath}"
+                    def junitJarPath = "libs/*"
+                    def classpath = "classes/*"
                     // JUnit 5 테스트 실행
                     sh "java -jar ${junitJarPath} --classpath ${classpath} --scan-classpath > test_results.txt"
                 }
