@@ -1,6 +1,8 @@
 import java.time.Year;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Book {
 
@@ -50,6 +52,30 @@ Book{id: '%s', 제목: '%s', 저자: '%s', 출판년도: %d}""", this.id, this.t
     public Book searchBook(String id){
         if(bookRegistry.containsKey(id)) {
             return bookRegistry.get(id);
+        }
+        System.out.println("검색된 도서가 없습니다.");
+        throw new IllegalArgumentException();
+    }
+
+    public Book search_bs(String id){
+        //  binary search
+        List<String> idList = bookRegistry.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList());
+        int left = 0;
+        int right = idList.size()-1;
+
+        while(left <= right){
+            int mid = (left + right) / 2;
+            if(idList.get(mid).equals(id)){
+                return bookRegistry.get(id);
+            }
+            else if(idList.get(mid).compareTo(id) < 0){
+                left = mid + 1;
+            }
+            else{
+                right = mid - 1;
+            }
         }
         System.out.println("검색된 도서가 없습니다.");
         throw new IllegalArgumentException();
