@@ -40,8 +40,8 @@ class JunitTestTest {
 	@Test
 	void testDivide() {
 		System.out.println("나눗셈 테스트 시작");
-		assertEquals(2, calculator.add(6, 3), "6 / 3 should equals 2");
-		System.out.println("나눗셈 테스트 통과: 6 / 3 = " +  calculator.add(6, 3));
+		assertEquals(2, calculator.divide(6, 3), "6 / 3 should equals 2");
+		System.out.println("나눗셈 테스트 통과: 6 / 3 = " +  calculator.divide(6, 3));
 	}
 	
 	@Test
