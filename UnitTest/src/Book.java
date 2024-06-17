@@ -1,7 +1,5 @@
 import java.time.Year;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Book {
@@ -38,42 +36,53 @@ public class Book {
 Book{id: '%s', 제목: '%s', 저자: '%s', 출판년도: %d}""", this.id, this.title, this.author, this.publishYear.getValue());
     }
 
-    private final Map<String, Book> bookRegistry = new HashMap<>();
+    private final LinkedList<Book> bookRegistry = new LinkedList<>();
 
     public void addBook(Book book) {
-        if(bookRegistry.containsKey(book.getId())) {
-            System.out.println(String.format("해당 ID(%s) 는 이미 존재합니다.",book.getId()));
-            throw new IllegalArgumentException();
+        for (Book b : bookRegistry) {
+            if (b.getId().equals(book.getId())) {
+                System.out.println(String.format("해당 ID(%s) 는 이미 존재합니다.", book.getId()));
+                throw new IllegalArgumentException();
+            }
         }
-        System.out.println(book+ "도서가 추가되었습니다.");
-        bookRegistry.put(book.getId(), book);
+        bookRegistry.sort(Comparator.comparing(Book::getId));
+        System.out.println(book + " 도서가 추가되었습니다.");
+        bookRegistry.add(book);
     }
 
-    public Book searchBook(String id){
-        if(bookRegistry.containsKey(id)) {
-            return bookRegistry.get(id);
+    public void addBatchBook(List<Book> books) {
+        for (Book book : books) {
+            for (Book b : bookRegistry) {
+                if (b.getId().equals(book.getId())) {
+                    System.out.println(String.format("해당 ID(%s) 는 이미 존재합니다.", book.getId()));
+                    throw new IllegalArgumentException();
+                }
+            }
+            bookRegistry.add(book);
+        }
+        bookRegistry.sort(Comparator.comparing(Book::getId));
+    }
+
+    public Book searchBook(String id) {
+        for (Book book : bookRegistry) {
+            if (book.getId().equals(id)) {
+                return book;
+            }
         }
         System.out.println("검색된 도서가 없습니다.");
         throw new IllegalArgumentException();
     }
 
-    public Book search_bs(String id){
-        //  binary search
-        List<String> idList = bookRegistry.keySet().stream()
-                .sorted()
-                .collect(Collectors.toList());
+    public Book search_bs(String id) {
         int left = 0;
-        int right = idList.size()-1;
-
-        while(left <= right){
+        int right = bookRegistry.size() - 1;
+        while (left <= right) {
             int mid = (left + right) / 2;
-            if(idList.get(mid).equals(id)){
-                return bookRegistry.get(id);
-            }
-            else if(idList.get(mid).compareTo(id) < 0){
+            if (bookRegistry.get(mid).getId().equals(id)) {
+                return bookRegistry.get(mid);
+            } else if (bookRegistry.get(mid).getId().compareTo(id) < 0) {
                 left = mid + 1;
-            }
-            else{
+            } else {
                 right = mid - 1;
             }
         }
@@ -81,16 +90,15 @@ Book{id: '%s', 제목: '%s', 저자: '%s', 출판년도: %d}""", this.id, this.t
         throw new IllegalArgumentException();
     }
 
-
     public void deleteBook(String id) {
-        if(bookRegistry.containsKey(id)) {
-        	Book book = bookRegistry.get(id);
-            bookRegistry.remove(id);
-            System.out.println(book+ "도서를 삭제하였습니다.");
-            return;
+        for (Book book : bookRegistry) {
+            if (book.getId().equals(id)) {
+                bookRegistry.remove(book);
+                System.out.println(book + " 도서를 삭제하였습니다.");
+                return;
+            }
         }
-        System.out.println(String.format("해당 ID(%s)의 도서를 찾을 수 없습니다.",id));
+        System.out.println(String.format("해당 ID(%s)의 도서를 찾을 수 없습니다.", id));
         throw new IllegalArgumentException();
-        
     }
 }
